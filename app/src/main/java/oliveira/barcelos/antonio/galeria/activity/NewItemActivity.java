@@ -1,8 +1,10 @@
-package oliveira.barcelos.antonio.galeria;
+package oliveira.barcelos.antonio.galeria.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+
+import oliveira.barcelos.antonio.galeria.R;
 
 public class NewItemActivity extends AppCompatActivity {
 
