@@ -1,23 +1,29 @@
 package oliveira.barcelos.antonio.galeria.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
 import oliveira.barcelos.antonio.galeria.R;
 import oliveira.barcelos.antonio.galeria.adapter.MyAdapter;
+import oliveira.barcelos.antonio.galeria.model.MainActivityViewModel;
 import oliveira.barcelos.antonio.galeria.model.MyItem;
+import oliveira.barcelos.antonio.galeria.util.Util;
 
 public class MainActivity extends AppCompatActivity {
     MyAdapter myAdapter;
@@ -45,6 +51,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         RecyclerView rvItens = findViewById(R.id.rvItens);
+
+        MainActivityViewModel vm = new ViewModelProvider( this ).get(MainActivityViewModel.class );
+        List<MyItem> itens = vm.getItens();
+
         myAdapter = new MyAdapter(this,itens);
         rvItens.setAdapter(myAdapter);
         rvItens.setHasFixedSize(true);
@@ -57,21 +67,24 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        //Número de chamada bate
+       super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == NEW_ITEM_REQUEST) {
-            //Retornou com sucesso
-            if(resultCode == Activity.RESULT_OK) {MyItem myItem = new MyItem();
-                //Adiciona o titulo da imagem ao myItem
+            if(resultCode == Activity.RESULT_OK) {
+                MyItem myItem = new MyItem();
                 myItem.title = data.getStringExtra("title");
-                //Adiciona o descrição da imagem ao myItem
                 myItem.description = data.getStringExtra("description");
-                //Adiciona o caminho da imagem ao myItem
-                myItem.photo = data.getData();
-                //Adiciona o myItem a lista de myItems
+                Uri selectedPhotoURI = data.getData();
+                try {
+                Bitmap photo = Util.getBitmap( MainActivity.this, selectedPhotoURI, 100, 100 );
+                myItem.photo = photo;
+                } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                }
+                MainActivityViewModel vm = new ViewModelProvider( this ).get(MainActivityViewModel.class );
+                List<MyItem> itens = vm.getItens();
                 itens.add(myItem);
                 myAdapter.notifyItemInserted(itens.size()-1);
+                }
             }
-        }
     }
 }

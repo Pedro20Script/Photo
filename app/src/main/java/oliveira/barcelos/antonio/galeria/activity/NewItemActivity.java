@@ -2,6 +2,7 @@ package oliveira.barcelos.antonio.galeria.activity;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -15,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import oliveira.barcelos.antonio.galeria.R;
+import oliveira.barcelos.antonio.galeria.model.NewItemActivityViewModel;
 
 public class NewItemActivity extends AppCompatActivity {
 
@@ -24,6 +26,12 @@ public class NewItemActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_item);
+        NewItemActivityViewModel vm = new ViewModelProvider( this ).get(NewItemActivityViewModel.class );
+        photoSelected = vm.getSelectPhotoLocation();
+        if(photoSelected != null) {
+            ImageView imvfotoPreview = findViewById(R.id.imvPhotoPreview);
+            imvfotoPreview.setImageURI(photoSelected);
+            }
         Button btnAddItem = findViewById(R.id.btnAddItem);
         btnAddItem.setOnClickListener(new View.OnClickListener() {
         @Override
@@ -79,9 +87,11 @@ public class NewItemActivity extends AppCompatActivity {
                     ImageView imvfotoPreview = findViewById(R.id.imvPhotoPreview);
                     //Colocando a imagem no imageview
                     imvfotoPreview.setImageURI(photoSelected);
+
+                    NewItemActivityViewModel vm = new ViewModelProvider( this).get( NewItemActivityViewModel.class );
+                    vm.setSelectPhotoLocation(photoSelected);
+
                 }
             }
     }
-
-
 }
